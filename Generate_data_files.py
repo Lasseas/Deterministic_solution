@@ -1335,16 +1335,21 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
     def generate_set_of_PeriodsInMonth(branch_counts, filename="Set_of_PeriodsInMonth.tab"):
         def data_generator():
-            # Extract valid period indices (starting from stage 2 = index 1)
+            # Extract valid periods (starting from stage 2 = index 1)
             valid_periods = [i for i, count in enumerate(branch_counts[1:], start=1) if count > 0]
 
-            # Create the DataFrame assigning all periods to Month 1
-            df = pd.DataFrame({
-                "Month": [1] * len(valid_periods),
-                "PeriodInMonth": list(range(1, len(valid_periods) + 1))
-            })
+            # Split the periods as equally as possible into 12 months
+            split_periods = np.array_split(valid_periods, 12)
 
-            yield df
+            rows = []
+            for month_idx, periods_in_month in enumerate(split_periods, start=1):
+                for period in periods_in_month:
+                    rows.append({
+                        "Month": month_idx,
+                        "PeriodInMonth": period
+                    })
+
+            yield pd.DataFrame(rows)
 
         make_tab_file(filename, data_generator())
 
@@ -1376,7 +1381,10 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
     def generate_Par_CostGridTariff(filename="Par_CostGridTariff.tab"):
         def data_generator():
             num_periods = get_number_of_periods_from_tab()
-            total_tariff = CostGridTariff * num_periods
+            if num_periods > 30:
+                total_tariff = CostGridTariff * 30
+            else:
+                total_tariff = CostGridTariff * num_periods
 
             df = pd.DataFrame([{
                 "Tariff": total_tariff
@@ -1386,15 +1394,22 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
 
 
-    def generate_Par_LastPeriodInMonth(filename="Par_LastPeriodInMonth.tab"):
+    def generate_Par_LastPeriodInMonth(result_folder, filenumber, filename="Par_LastPeriodInMonth.tab"):
         def data_generator():
-            # This function assumes that the number of periods is constant for all months
-            num_periods = get_number_of_periods_from_tab()
-            df = pd.DataFrame([{"Month": 1, "LastPeriodInMonth": num_periods}])
-            yield df
+            # Build the path to Set_of_PeriodsInMonth.tab
+            in_sample_data_folder = os.path.join(result_folder, f"In_sample_data_{filenumber}")
+            periods_in_month_path = os.path.join(in_sample_data_folder, "Set_of_PeriodsInMonth.tab")
+
+            # Read the periods per month from the file
+            df_periods = pd.read_csv(periods_in_month_path, sep="\t")
+
+            # Group by Month and find the max PeriodInMonth
+            df_last_periods = df_periods.groupby("Month")["PeriodInMonth"].max().reset_index()
+            df_last_periods.rename(columns={"PeriodInMonth": "LastPeriodInMonth"}, inplace=True)
+
+            yield df_last_periods
 
         make_tab_file(filename, data_generator())
-        
 
 
   
@@ -2002,4 +2017,4 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
     generate_Par_CostExpansion_Tec()
     generate_Par_CostExpansion_Bat()
     generate_Par_CostGridTariff()
-    generate_Par_LastPeriodInMonth()
+    generate_Par_LastPeriodInMonth(result_folder, filenumber)

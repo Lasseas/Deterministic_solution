@@ -1127,7 +1127,7 @@ if case != "max_out":
 
 
 our_model.dual = pyo.Suffix(direction=pyo.Suffix.IMPORT) #Import dual values into solver results
-#import pdb; pdb.set_trace()
+import pdb; pdb.set_trace()
 
 
 """
