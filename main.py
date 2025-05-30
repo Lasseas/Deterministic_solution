@@ -25,8 +25,8 @@ from Generate_data_files import run_everything
 parser = argparse.ArgumentParser(description="Run model instance")
 #parser.add_argument("--instance", type=int, required=True, help="Instance number (e.g., 1–5)")
 parser.add_argument("--year", type=int, required=True, help="Year (e.g., 2025 or 2050)")
-parser.add_argument("--case", type=str, required=True, choices=["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "max_out", "git_push"], help="Specify case type")
-parser.add_argument("--cluster", type=str, required=True, choices=["random", "season", "guided", "diversed"], help="Specify case type")
+parser.add_argument("--case", type=str, required=True, choices=["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "max_out", "git_push", "deterministic"], help="Specify case type")
+parser.add_argument("--cluster", type=str, required=True, choices=["random", "season", "guided", "diversed", "consecutive"], help="Specify case type")
 parser.add_argument("--industry", type=str, required=True, choices = ["pulp", "alu"], help="Specify industry type")
 parser.add_argument("--file", type=str, required=True, help="Path to the Result file")
 args = parser.parse_args()
@@ -63,7 +63,8 @@ case_configs = {
     "balanced_large": (2, 4, 4, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0), #1024 scenarioer
     "max_in":  (2, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     "max_out":  (2, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-    "git_push": (2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    "git_push": (2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    "deterministic": (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) 
 }
 
 (
@@ -100,6 +101,7 @@ if case != "max_out":
     instance,
     year,
     cluster,
+    case,
     num_branches_to_firstStage,
     num_branches_to_secondStage,
     num_branches_to_thirdStage,
@@ -918,7 +920,7 @@ model.MaxTotalUpDwnLoadShift = pyo.Constraint(model.Nodes_in_stage, model.Time, 
 ########################################################################
 ############## RESERVE MARKET PARTICIPATION LIMITS #####################
 ########################################################################
-"""
+
 def reserve_down_limit(model, n, p, t, s, e):
     if e == "Electricity" and (n,s) in model.Nodes_in_stage:  # Ensure e = EL
         return model.x_DWN[p, t] <= (
@@ -944,7 +946,7 @@ def reserve_up_limit(model, n, p, t, s, e):
     else:
         return pyo.Constraint.Skip
 model.ReserveUpLimit = pyo.Constraint(model.Parent_Node, model.Time, model.Period, model.EnergyCarrier, rule=reserve_up_limit)
-"""
+
 ########################################################################
 ############## UPPER-UPPER BOUND CAPACITY MARKET BIDS ##################
 ########################################################################
@@ -1629,7 +1631,7 @@ def write_updated_initial_parameters(model_instance, folder_path):
 #out_of_sample_folder = "Out_of_sample_results"
 #write_updated_initial_parameters(our_model, result_folder)
 
-if case in ["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "git_push"]:
+if case in ["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "git_push", "deterministic"]:
     print("\n➡️  Running out-of-sample test for 'max_out' case...\n")
     
     # Determine the global out-of-sample folder based on industry

@@ -3,20 +3,50 @@ import numpy as np
 import random
 import os
 
-def run_everything(excel_path, result_folder, filenumber, instance, year, cluster, num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage):
+def run_everything(excel_path, result_folder, filenumber, instance, year, cluster, case, num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage):
     
 
     num_timesteps = 24
-    num_nodes = (
-        num_branches_to_firstStage + num_branches_to_firstStage*num_branches_to_secondStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage 
-        + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage 
-        + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage 
-        + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage 
-        + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage
-        + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage*num_branches_to_fifteenthStage
-    )
-    num_firstStageNodes = num_branches_to_firstStage
-    num_nodesInlastStage = max(num_branches_to_firstStage, num_branches_to_firstStage*num_branches_to_secondStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage, num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage,num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage*num_branches_to_fifteenthStage)
+
+    def get_branch_counts(excel_path):
+        # Read the Excel file and build day_data_map – this is used for day assignments
+        df = pd.read_excel(excel_path, sheet_name="2024 NO1 data")
+        df = df.dropna(how='all')
+        df_grouped = df.groupby(["Month", "Day"])
+        day_data_map = { (int(m), int(d)) : group 
+                        for ((m, d), group) in df_grouped if len(group)==24 }
+        sorted_days = sorted(day_data_map.keys(), key=lambda d: (int(d[0]), int(d[1])))
+        # Ensure (1,1) is available if necessary
+        if (1,1) not in sorted_days:
+            raise ValueError("Day (1, 1) must be present in day_data_map for deterministic duplication.")
+
+        # For deterministic consecutive case, override branch_counts to be one per stage:
+        if case == "deterministic" and cluster == "consecutive":
+            # +1 for the root stage if your node mapping considers stage 1 as the root.
+            branch_counts = [1] * (len(sorted_days) + 1)
+            print(f"[deterministic] Overriding branch_counts to: {branch_counts}")
+            num_nodes = sum(branch_counts)
+        else:
+            branch_counts = [num_branches_to_firstStage, num_branches_to_secondStage,
+            num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage,
+            num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage,
+            num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage,
+            num_branches_to_twelfthStage, num_branches_to_thirteenthStage,
+            num_branches_to_fourteenthStage, num_branches_to_fifteenthStage]
+            num_nodes = (
+                num_branches_to_firstStage + num_branches_to_firstStage*num_branches_to_secondStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage 
+                + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage 
+                + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage 
+                + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage 
+                + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage
+                + num_branches_to_firstStage*num_branches_to_secondStage*num_branches_to_thirdStage*num_branches_to_fourthStage*num_branches_to_fifthStage*num_branches_to_sixthStage*num_branches_to_seventhStage*num_branches_to_eighthStage*num_branches_to_ninthStage*num_branches_to_tenthStage*num_branches_to_eleventhStage*num_branches_to_twelfthStage*num_branches_to_thirteenthStage*num_branches_to_fourteenthStage*num_branches_to_fifteenthStage
+            )
+        return branch_counts, num_nodes
+    
+    branch_counts, num_nodes = get_branch_counts(excel_path)
+
+    num_firstStageNodes = 1
+    num_nodesInlastStage = 1
 
 
     technologies = ["Power_Grid", "ElectricBoiler", "HP_LT", "HP_MT", "PV", "P2G", "G2P", "GasBoiler", "GasBoiler_CCS", "CHP", "CHP_CCS", "Biogas_Grid", "CH4_Grid", "CH4_H2_Mixer", "DieselReserveGenerator", "H2_Grid", "Dummy_Grid"]
@@ -182,27 +212,36 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
     ###############################################################################
     ################# DENNE MÅ LAGES TIDLIGERE ENN DE ANDRE #######################
     ###############################################################################
-    generate_set_Parent_Coupling([num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage])
+    generate_set_Parent_Coupling(branch_counts)
 
-    def generate_set_of_NodesInStage(branch_counts, filename = "Set_of_NodesInStage.tab"):
+    def generate_set_of_NodesInStage(branch_counts, case, filename = "Set_of_NodesInStage.tab"):
         nodes_in_stage = []  # To hold rows of the form {"Nodes": child_node, "Period": period}
+
+        if case == "deterministic":
+            node_counter = 0
+        for stage_index in range(1, len(branch_counts) + 1):
+            node_counter += 1
+            period = stage_index - 1  # stage 2 -> period 1, etc.
+            if period > 0:
+                nodes_in_stage.append({"Nodes": node_counter, "Period": period})
         
-        # Define the root nodes (stage 1) – these are not output since they have no parent period.
-        current_stage = list(range(1, branch_counts[0] + 1))
-        node_counter = current_stage[-1]  # Last node number in stage 1
-        
-        # For each subsequent stage, generate children and record their period (stage_index).
-        # Here, stage 2 corresponds to Period 1, stage 3 to Period 2, etc.
-        for stage_index in range(1, len(branch_counts)):
-            next_stage = []
-            period = stage_index  # period = stage_index (so stage 2 -> period 1, stage 3 -> period 2, etc.)
-            for parent in current_stage:
-                for _ in range(branch_counts[stage_index]):
-                    node_counter += 1
-                    child = node_counter
-                    next_stage.append(child)
-                    nodes_in_stage.append({"Nodes": child, "Period": period})
-            current_stage = next_stage
+        else:
+            # Define the root nodes (stage 1) – these are not output since they have no parent period.
+            current_stage = list(range(1, branch_counts[0] + 1))
+            node_counter = current_stage[-1]  # Last node number in stage 1
+            
+            # For each subsequent stage, generate children and record their period (stage_index).
+            # Here, stage 2 corresponds to Period 1, stage 3 to Period 2, etc.
+            for stage_index in range(1, len(branch_counts)):
+                next_stage = []
+                period = stage_index  # period = stage_index (so stage 2 -> period 1, stage 3 -> period 2, etc.)
+                for parent in current_stage:
+                    for _ in range(branch_counts[stage_index]):
+                        node_counter += 1
+                        child = node_counter
+                        next_stage.append(child)
+                        nodes_in_stage.append({"Nodes": child, "Period": period})
+                current_stage = next_stage
 
         def data_generator(chunk_size=10_000_000):
             # Yield the entire mapping as one chunk.
@@ -252,7 +291,7 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
 
 
-    NodeProbability = generate_node_probability([num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage])
+    NodeProbability = generate_node_probability(branch_counts)
 
     ###############################################################################
     # ----------------- Parameter data  -----------------
@@ -1107,6 +1146,38 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
         print("✅ Diversed clustering complete: each sibling set has one HIGH, one LOW, one MEDIUM (if ≥3), rest random.")
 
+    elif cluster == "consecutive":
+         # Get a sorted list of valid days from day_data_map
+        sorted_days = sorted(day_data_map.keys(), key=lambda d: (int(d[0]), int(d[1])))
+        print(f"[consecutive] Sorted days: {sorted_days}")
+
+        # Ensure (1,1) is available
+        if (1, 1) not in sorted_days:
+            raise ValueError("Day (1, 1) must be present in day_data_map for deterministic duplication.")
+
+        # Determine all nodes that need a day assignment
+        all_nodes = set()
+        for parent, kids in mapping_converted.items():
+            all_nodes.add(parent)
+            all_nodes.update(kids)
+        all_nodes.update(range(1, num_firstStageNodes + 1))
+        sorted_nodes = sorted(all_nodes)
+
+        # Assign day (1, 1) to the first two nodes
+        node_to_day[sorted_nodes[0]] = (1, 1)
+        node_to_day[sorted_nodes[1]] = (1, 1)
+        print(f"[consecutive] Node {sorted_nodes[0]}: Assigned day (1, 1)")
+        print(f"[consecutive] Node {sorted_nodes[1]}: Assigned day (1, 1)")
+
+        # Remove (1,1) from sorted_days to avoid reassigning it
+        remaining_days = [d for d in sorted_days if d != (1, 1)]
+
+        # Assign the rest of the days in order
+        for idx, node in enumerate(sorted_nodes[2:]):
+            day = remaining_days[idx % len(remaining_days)]
+            node_to_day[node] = day
+            print(f"[consecutive] Node {node}: Assigned day {day}")
+
 
     else:
         raise ValueError(f"Unknown cluster type: {cluster}")
@@ -1556,56 +1627,89 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
 
 
-    def generate_activation_factors(num_nodes, num_timesteps, parent_mapping, activation_rate=0.8):
+    def generate_activation_factors(num_nodes, num_timesteps, parent_mapping, case, activation_rate=0.8):
         
         #activation_rate = andel av barnenodene som skal være aktive (enten opp eller ned) i hver time.
-        
-        parent_to_children = {}
-        for child, parent in parent_mapping.items():
-            parent_to_children.setdefault(parent, []).append(child)
+        if case != "deterministic":
+            parent_to_children = {}
+            for child, parent in parent_mapping.items():
+                parent_to_children.setdefault(parent, []).append(child)
 
-        rows = []
+            rows = []
 
-        for parent, children in parent_to_children.items():
-            for t in range(1, num_timesteps + 1):
-                num_children = len(children)
-                if num_children < 2:
-                    raise ValueError(f"Forelder {parent} har for få barn til å sikre både opp- og nedregulering i time {t}")
+            for parent, children in parent_to_children.items():
+                for t in range(1, num_timesteps + 1):
+                    num_children = len(children)
+                    if num_children < 2:
+                        raise ValueError(f"Forelder {parent} har for få barn til å sikre både opp- og nedregulering i time {t}")
 
-                # Hvor mange barn skal aktiveres denne timen?
-                num_active = max(2, int(activation_rate * num_children))  # minst 2 (én opp, én ned)
-                
-                active_children = random.sample(children, num_active)
+                    # Hvor mange barn skal aktiveres denne timen?
+                    num_active = max(2, int(activation_rate * num_children))  # minst 2 (én opp, én ned)
+                    
+                    active_children = random.sample(children, num_active)
 
-                # Plukk én for opp, én for ned
-                random.shuffle(active_children)
-                child_up = active_children.pop()
-                child_down = active_children.pop()
+                    # Plukk én for opp, én for ned
+                    random.shuffle(active_children)
+                    child_up = active_children.pop()
+                    child_down = active_children.pop()
 
-                activation = {}
+                    activation = {}
 
-                for child in children:
-                    if child == child_up:
-                        activation[child] = (1, 0)
-                    elif child == child_down:
-                        activation[child] = (0, 1)
-                    elif child in active_children:
-                        # Fordel tilfeldig opp eller ned på resten av de aktive
-                        if random.random() < 0.5:
+                    for child in children:
+                        if child == child_up:
                             activation[child] = (1, 0)
-                        else:
+                        elif child == child_down:
                             activation[child] = (0, 1)
-                    else:
-                        # Ikke aktivert
-                        activation[child] = (0, 0)
+                        elif child in active_children:
+                            # Fordel tilfeldig opp eller ned på resten av de aktive
+                            if random.random() < 0.5:
+                                activation[child] = (1, 0)
+                            else:
+                                activation[child] = (0, 1)
+                        else:
+                            # Ikke aktivert
+                            activation[child] = (0, 0)
 
-                for child, (up, down) in activation.items():
-                    rows.append({
-                        "Node": child,
-                        "Time": t,
-                        "ActivationFactorUpReg": up,
-                        "ActivationFactorDownReg": down
-                    })
+                    for child, (up, down) in activation.items():
+                        rows.append({
+                            "Node": child,
+                            "Time": t,
+                            "ActivationFactorUpReg": up,
+                            "ActivationFactorDownReg": down
+                        })
+
+        elif case == "deterministic":
+            # For deterministic case, we assume a fixed activation pattern
+            rows = []
+            for t in range(1, num_timesteps + 1):
+                for node in range(num_firstStageNodes + 1, num_nodes + 1):
+                    rand = random.random()
+                    if rand < activation_rate / 2:
+                        # Activate up-regulation
+                        rows.append({
+                            "Node": node,
+                            "Time": t,
+                            "ActivationFactorUpReg": 1,
+                            "ActivationFactorDownReg": 0
+                        })
+                    elif rand < activation_rate:
+                        # Activate down-regulation
+                        rows.append({
+                            "Node": node,
+                            "Time": t,
+                            "ActivationFactorUpReg": 0,
+                            "ActivationFactorDownReg": 1
+                        })
+                    else:
+                        # No activation
+                        rows.append({
+                            "Node": node,
+                            "Time": t,
+                            "ActivationFactorUpReg": 0,
+                            "ActivationFactorDownReg": 0
+                        })
+        else:
+            raise ValueError(f"Unknown case: {case} for activation factors.")
 
         return pd.DataFrame(rows)
 
@@ -1730,9 +1834,9 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
     def generate_joint_regulation_activation_files(num_nodes, num_timesteps, up_filename = "Par_ActivationFactor_Up_Reg.tab", down_filename = "Par_ActivationFactor_Dwn_Reg.tab"):
         if excel_path == "NO1_Pulp_Paper_2024_combined historical data.xlsx" or excel_path == "NO1_Pulp_Paper_2024_combined historical data_Uten_SatSun.xlsx":
-            df_joint = generate_activation_factors(num_nodes, num_timesteps, parent_mapping)
+            df_joint = generate_activation_factors(num_nodes, num_timesteps, parent_mapping, case)
         elif excel_path == "NO1_Aluminum_2024_combined historical data.xlsx":
-            df_joint = generate_activation_factors(num_nodes, num_timesteps, parent_mapping)
+            df_joint = generate_activation_factors(num_nodes, num_timesteps, parent_mapping, case)
         else:
             raise ValueError("Invalid excel_path. Please provide a valid path.")
 
@@ -1863,9 +1967,9 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
     generate_Set_TimeSteps(num_timesteps)
     generate_Set_of_Nodes(num_nodes)
     generate_set_of_Parents(num_nodes)
-    generate_set_of_NodesInStage([num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage])
-    generate_set_of_Periods([num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage])
-    generate_set_of_PeriodsInMonth([num_branches_to_firstStage, num_branches_to_secondStage, num_branches_to_thirdStage, num_branches_to_fourthStage, num_branches_to_fifthStage, num_branches_to_sixthStage, num_branches_to_seventhStage, num_branches_to_eighthStage, num_branches_to_ninthStage, num_branches_to_tenthStage, num_branches_to_eleventhStage, num_branches_to_twelfthStage, num_branches_to_thirteenthStage, num_branches_to_fourteenthStage, num_branches_to_fifteenthStage])
+    generate_set_of_NodesInStage(branch_counts, case)
+    generate_set_of_Periods(branch_counts)
+    generate_set_of_PeriodsInMonth(branch_counts)
     generate_set_of_LoadShiftingPeriod()
     generate_set_of_NodesFirst(num_branches_to_firstStage)
 
