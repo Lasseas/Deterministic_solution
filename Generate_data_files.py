@@ -216,32 +216,23 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
     def generate_set_of_NodesInStage(branch_counts, case, filename = "Set_of_NodesInStage.tab"):
         nodes_in_stage = []  # To hold rows of the form {"Nodes": child_node, "Period": period}
-
-        if case == "deterministic":
-            node_counter = 0
-        for stage_index in range(1, len(branch_counts) + 1):
-            node_counter += 1
-            period = stage_index - 1  # stage 2 -> period 1, etc.
-            if period > 0:
-                nodes_in_stage.append({"Nodes": node_counter, "Period": period})
         
-        else:
-            # Define the root nodes (stage 1) – these are not output since they have no parent period.
-            current_stage = list(range(1, branch_counts[0] + 1))
-            node_counter = current_stage[-1]  # Last node number in stage 1
-            
-            # For each subsequent stage, generate children and record their period (stage_index).
-            # Here, stage 2 corresponds to Period 1, stage 3 to Period 2, etc.
-            for stage_index in range(1, len(branch_counts)):
-                next_stage = []
-                period = stage_index  # period = stage_index (so stage 2 -> period 1, stage 3 -> period 2, etc.)
-                for parent in current_stage:
-                    for _ in range(branch_counts[stage_index]):
-                        node_counter += 1
-                        child = node_counter
-                        next_stage.append(child)
-                        nodes_in_stage.append({"Nodes": child, "Period": period})
-                current_stage = next_stage
+        # Define the root nodes (stage 1) – these are not output since they have no parent period.
+        current_stage = list(range(1, branch_counts[0] + 1))
+        node_counter = current_stage[-1]  # Last node number in stage 1
+        
+        # For each subsequent stage, generate children and record their period (stage_index).
+        # Here, stage 2 corresponds to Period 1, stage 3 to Period 2, etc.
+        for stage_index in range(1, len(branch_counts)):
+            next_stage = []
+            period = stage_index  # period = stage_index (so stage 2 -> period 1, stage 3 -> period 2, etc.)
+            for parent in current_stage:
+                for _ in range(branch_counts[stage_index]):
+                    node_counter += 1
+                    child = node_counter
+                    next_stage.append(child)
+                    nodes_in_stage.append({"Nodes": child, "Period": period})
+            current_stage = next_stage
 
         def data_generator(chunk_size=10_000_000):
             # Yield the entire mapping as one chunk.
@@ -1335,21 +1326,16 @@ def run_everything(excel_path, result_folder, filenumber, instance, year, cluste
 
     def generate_set_of_PeriodsInMonth(branch_counts, filename="Set_of_PeriodsInMonth.tab"):
         def data_generator():
-            # Extract valid periods (starting from stage 2 = index 1)
+            # Extract valid period indices (starting from stage 2 = index 1)
             valid_periods = [i for i, count in enumerate(branch_counts[1:], start=1) if count > 0]
 
-            # Split the periods as equally as possible into 12 months
-            split_periods = np.array_split(valid_periods, 12)
+            # Create the DataFrame assigning all periods to Month 1
+            df = pd.DataFrame({
+                "Month": [1] * len(valid_periods),
+                "PeriodInMonth": list(range(1, len(valid_periods) + 1))
+            })
 
-            rows = []
-            for month_idx, periods_in_month in enumerate(split_periods, start=1):
-                for period in periods_in_month:
-                    rows.append({
-                        "Month": month_idx,
-                        "PeriodInMonth": period
-                    })
-
-            yield pd.DataFrame(rows)
+            yield df
 
         make_tab_file(filename, data_generator())
 

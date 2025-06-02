@@ -19,13 +19,13 @@ from pyomo.environ import *
 
 import argparse
 
-from Generate_data_files import run_everything
+#from Generate_data_files import run_everything
 
 
 parser = argparse.ArgumentParser(description="Run model instance")
 #parser.add_argument("--instance", type=int, required=True, help="Instance number (e.g., 1–5)")
 parser.add_argument("--year", type=int, required=True, help="Year (e.g., 2025 or 2050)")
-parser.add_argument("--case", type=str, required=True, choices=["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "max_out", "git_push", "deterministic"], help="Specify case type")
+parser.add_argument("--case", type=str, required=True, choices=["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "max_out", "git_push", "deterministic", "reference_tree"], help="Specify case type")
 parser.add_argument("--cluster", type=str, required=True, choices=["random", "season", "guided", "diversed", "consecutive"], help="Specify case type")
 parser.add_argument("--industry", type=str, required=True, choices = ["pulp", "alu"], help="Specify industry type")
 parser.add_argument("--file", type=str, required=True, help="Path to the Result file")
@@ -64,7 +64,7 @@ case_configs = {
     "max_in":  (2, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     "max_out":  (2, 5, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0),
     "git_push": (2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-    "deterministic": (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) 
+    "deterministic": (1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 
 (
@@ -91,7 +91,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 result_folder = os.path.join(base_dir, "Results", f"Results_{filenumber}")
 os.makedirs(result_folder, exist_ok=True)
 
-
+"""
 if case != "max_out":
 
     run_everything(
@@ -118,7 +118,7 @@ if case != "max_out":
     num_branches_to_fourteenthStage,
     num_branches_to_fifteenthStage
 )
-   
+"""
     
 def make_tab_file(filename, data_generator, chunk_size=10_000_000):
         """
@@ -199,7 +199,7 @@ def read_all_sheets(excel):
 #####################################################################################
 
 import os
-"""
+
 # Always resolve the tab file path relative to script's location
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -212,7 +212,7 @@ if case == "max_out":
         raise ValueError("Unknown excel file type. Please check the file name.")
 else:
     tab_file_folder = SCRIPT_DIR
-"""
+
 # --- Use local folder if max_out, otherwise use script's location ---
 import os
 if case == "max_out":
@@ -223,13 +223,13 @@ if case == "max_out":
 
     tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
     #tab_file_folder = os.getcwd()  # local working directory (copied out-of-sample folder)
-else:
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    Grandparent_folder = f"Results"
-    parent_folder = f"Results_{filenumber}"
-    sub_folder = f"In_sample_data_{filenumber}"
 
-    tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
+    #base_dir = os.path.dirname(os.path.abspath(__file__))
+    #Grandparent_folder = f"Results"
+    #parent_folder = f"Results_{filenumber}"
+    #sub_folder = f"In_sample_data_{filenumber}"
+
+    #tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
     #tab_file_folder = os.path.dirname(os.path.abspath(__file__))
 
 
