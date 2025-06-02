@@ -28,6 +28,7 @@ parser.add_argument("--year", type=int, required=True, help="Year (e.g., 2025 or
 parser.add_argument("--case", type=str, required=True, choices=["wide_small", "wide_medium", "wide_large", "deep_small", "deep_medium", "deep_large", "balanced_small", "balanced_medium", "balanced_large", "max_in", "max_out", "git_push", "deterministic", "reference_tree"], help="Specify case type")
 parser.add_argument("--cluster", type=str, required=True, choices=["random", "season", "guided", "diversed", "consecutive"], help="Specify case type")
 parser.add_argument("--industry", type=str, required=True, choices = ["pulp", "alu"], help="Specify industry type")
+parser.add_argument("--activation", type=str, required=True, choices = ["avg", "zeros", "ones", "alternating"], help="Specify activation type")
 parser.add_argument("--file", type=str, required=True, help="Path to the Result file")
 args = parser.parse_args()
 
@@ -39,6 +40,7 @@ cluster = args.cluster
 filenumber = args.file
 industrytype = args.industry
 instance = 1
+activation = args.activation
 
 if industrytype == "pulp":
     excel_path = "NO1_Pulp_Paper_2024_combined historical data_Uten_SatSun.xlsx"
@@ -455,8 +457,22 @@ data.load(filename=os.path.join(tab_file_folder, "Par_InitialCapacityInstalled.t
 data.load(filename=os.path.join(tab_file_folder, "Par_AvailabilityFactor.tab"), param=model.Availability_Factor, format="table")
 data.load(filename=os.path.join(tab_file_folder, "Par_CarbonIntensity.tab"), param=model.Carbon_Intensity, format="table")
 data.load(filename=os.path.join(tab_file_folder, "Par_MaxExport.tab"), param=model.Max_Export, format="table")
-data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Up_Reg.tab"), param=model.Activation_Factor_UP_Regulation, format="table")
-data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Dwn_Reg.tab"), param=model.Activation_Factor_DWN_Regulation, format="table")
+
+if activation == "avg":
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Up_Reg.tab"), param=model.Activation_Factor_UP_Regulation, format="table")
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Dwn_Reg.tab"), param=model.Activation_Factor_DWN_Regulation, format="table")
+elif activation == "zeros":
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Up_Reg_zeros.tab"), param=model.Activation_Factor_UP_Regulation, format="table")
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Dwn_Reg_zeros.tab"), param=model.Activation_Factor_DWN_Regulation, format="table")
+elif activation == "ones":
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Up_Reg_ones.tab"), param=model.Activation_Factor_UP_Regulation, format="table")
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Dwn_Reg_ones.tab"), param=model.Activation_Factor_DWN_Regulation, format="table")
+elif activation == "alternating":
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Up_Reg_Alternating.tab"), param=model.Activation_Factor_UP_Regulation, format="table")
+    data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_Dwn_Reg_Alternating.tab"), param=model.Activation_Factor_DWN_Regulation, format="table")
+else:
+    raise ValueError("Invalid activation type. Please choose 'avg', 'zeros', 'ones', or 'alternating'.")
+
 data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_ID_Up_Reg.tab"), param=model.Activation_Factor_ID_Up, format="table")
 data.load(filename=os.path.join(tab_file_folder, "Par_ActivationFactor_ID_Dwn_Reg.tab"), param=model.Activation_Factor_ID_Dwn, format="table")
 data.load(filename=os.path.join(tab_file_folder, "Par_AvailableExcessHeat.tab"), param=model.Available_Excess_Heat, format="table")
@@ -1658,7 +1674,7 @@ if case in ["wide_small", "wide_medium", "wide_large", "deep_small", "deep_mediu
     import subprocess
     main_abs = os.path.join(base_dir, "main.py")
     subprocess.run(
-        ["python", main_abs, "--year", str(year), "--case", "max_out", "--cluster", "season", "--industry", industry_flag, "--file", filenumber],
+        ["python", main_abs, "--year", str(year), "--case", "max_out", "--cluster", "season", "--industry", industry_flag, "--activation", activation ,"--file", filenumber],
         cwd=local_out_sample)
     
 
