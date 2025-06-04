@@ -19,7 +19,7 @@ from pyomo.environ import *
 
 import argparse
 
-#from Generate_data_files import run_everything
+from Generate_data_files import run_everything
 
 
 parser = argparse.ArgumentParser(description="Run model instance")
@@ -93,7 +93,7 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 result_folder = os.path.join(base_dir, "Results", f"Results_{filenumber}")
 os.makedirs(result_folder, exist_ok=True)
 
-"""
+
 if case != "max_out":
 
     run_everything(
@@ -120,7 +120,7 @@ if case != "max_out":
     num_branches_to_fourteenthStage,
     num_branches_to_fifteenthStage
 )
-"""
+
     
 def make_tab_file(filename, data_generator, chunk_size=10_000_000):
         """
@@ -207,14 +207,14 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 if case == "max_out":
     if "Pulp" in excel_path:
-        tab_file_folder = os.path.join(SCRIPT_DIR, "Out_of_sample")
+        tab_file_folder = os.path.join(SCRIPT_DIR, "Out_of_sample_pulp")
     elif "Aluminum" in excel_path:
         tab_file_folder = os.path.join(SCRIPT_DIR, "Out_of_sample_alu")
     else:
         raise ValueError("Unknown excel file type. Please check the file name.")
 else:
     tab_file_folder = SCRIPT_DIR
-
+"""
 # --- Use local folder if max_out, otherwise use script's location ---
 import os
 if case == "max_out":
@@ -233,7 +233,24 @@ if case == "max_out":
 
     #tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
     #tab_file_folder = os.path.dirname(os.path.abspath(__file__))
+"""
+import os
+if case == "max_out":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    Grandparent_folder = f"Results"
+    parent_folder = f"Results_{filenumber}"
+    sub_folder = f"Out_of_sample_{filenumber}"
 
+    tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
+    #tab_file_folder = os.getcwd()  # local working directory (copied out-of-sample folder)
+else:
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    Grandparent_folder = f"Results"
+    parent_folder = f"Results_{filenumber}"
+    sub_folder = f"In_sample_data_{filenumber}"
+
+    tab_file_folder = os.path.join(base_dir, Grandparent_folder, parent_folder, sub_folder)
+    #tab_file_folder = os.path.dirname(os.path.abspath(__file__))
 
 def generate_cost_activity(num_nodes, num_timesteps, cost_activity, tab_file_folder,  filename="Par_ActivityCost.tab"):
     # Resolve filename relative to the chosen folder
